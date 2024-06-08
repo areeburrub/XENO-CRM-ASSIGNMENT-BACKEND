@@ -7,7 +7,7 @@ router.get("/login/success", (req, res) => {
   if (req.user) {
     res.status(200).json({
       error: false,
-      message: "Successfully Loged In",
+      message: "Successfully Logged In",
       user: req.user,
     });
   } else {
@@ -22,45 +22,42 @@ router.get("/login/failed", (req, res) => {
   });
 });
 
-router.get(
-  "/google", (req, res, next) => {
-    // Save the `next` parameter in the session
-    if (req.query.next) {
-        if (req.session) {
-            req.session.next = req.query.next as string;
-        } else {
-            console.error('Session is not available');
-        }
+router.get("/google", (req, res, next) => {
+  if (req.query.next) {
+    if (req.session) {
+      req.session.next = req.query.next as string;
+    } else {
+      console.error("Session is not available");
     }
-    // Call passport authenticate
-    passport.authenticate('google', {
-        scope: ['profile', 'email']
-    })(req, res, next);
+  }
+  // Call passport authenticate
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })(req, res, next);
 });
-
 
 router.get(
-  "/google/callback", (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate('google', (err: any, user: any, info: any) => {
+  "/google/callback",
+  (req: Request, res: Response, next: NextFunction) => {
+    passport.authenticate("google", (err: any, user: any, info: any) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return res.redirect("/login/failed");
+      }
+      req.logIn(user, (err) => {
         if (err) {
-            return next(err);
+          return next(err);
         }
-        if (!user) {
-            return res.redirect('/login/failed');
-        }
-        req.logIn(user, (err) => {
-            if (err) {
-                return next(err);
-            }
-            // Redirect to the `next` parameter or a default URL
-            const redirectUrl = req?.session?.next || process.env.CLIENT_URL;
-            console.log(redirectUrl, req?.session?.next)
-            delete req?.session?.next; // Clean up the session
-            return res.redirect(redirectUrl as string);
-        });
+        const redirectUrl = req?.session?.next || process.env.CLIENT_URL;
+        console.log(redirectUrl, req?.session?.next);
+        delete req?.session?.next;
+        return res.redirect(redirectUrl as string);
+      });
     })(req, res, next);
-});
-
+  }
+);
 
 router.get("/logout", (req, res) => {
   req.logout((err) => {
