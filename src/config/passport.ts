@@ -1,6 +1,7 @@
 import { Strategy as GoogleStartegy } from "passport-google-oauth20";
 import passport from "passport";
 import * as dotenv from "dotenv";
+import prisma from "../prisma";
 
 dotenv.config();
 
@@ -12,8 +13,29 @@ passport.use(
       callbackURL: "/auth/google/callback",
       scope: ["email", "profile"],
     },
-    (accessToken, refreshToken, profile, done) => {
-      return done(null, profile);
+    async (accessToken, refreshToken, profile, done) => {
+        try {
+            let user = await prisma.user.findUnique({
+                where: {
+                    id: profile.id,
+                },
+            });
+
+            if (!user) {
+                user = await prisma.user.create({
+                    data: {
+                        id: profile.id,
+                        name: profile.displayName!,
+                        email: profile.emails![0].value,
+                        photo: profile.photos![0].value,
+                    },
+                });
+            }
+
+            done(null, user);
+        } catch (error) {
+            done(error);
+        }
     }
   )
 );
