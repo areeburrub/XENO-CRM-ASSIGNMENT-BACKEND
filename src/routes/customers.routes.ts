@@ -4,9 +4,10 @@ import {
   getCustomer,
   createCustomer,
   updateCustomer,
-  deleteCustomer,
+  deleteCustomer, getCustomerCount,
 } from "../controllers/customers.controller";
 
+import handleValidationError from "../middlewares/handleValidationError";
 
 import {
   createCustomerValidation,
@@ -15,14 +16,16 @@ import {
 
 const router = Router();
 
-router.get("/", getCustomers); //get all customer
+router.get("/count", getCustomerCount);
 
-router.post("/", createCustomerValidation, createCustomer);
+router.get("/", getCustomers);
 
-router.get("/:id", getCustomer); //get a customer by id
+router.post("/", createCustomerValidation, handleValidationError, createCustomer);
 
-router.put("/:id", updateCustomerValidation, updateCustomer);
+router.get("/:id", getCustomer);
 
-router.delete("/:id", deleteCustomer);
+router.put("/:id", updateCustomerValidation, handleValidationError, updateCustomer);
+
+router.delete("/", deleteCustomer);
 
 export default router;

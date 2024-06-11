@@ -5,10 +5,21 @@ export const redisClientPublisher = createClient();
 redisClientPublisher.connect()
 
 export enum Channels {
+
+    // channels for customers
     CreateCustomer = "createCustomer",
     UpdateCustomer = "updateCustomer",
     DeleteCustomer = "deleteCustomer",
+
+    // channels for notifications
     PushNotifications = "pushNotifications",
+    RemoveNotifications = "removeNotifications",
+
+    // channels for orders
+    CreateOrder = "createOrder",
+    UpdateOrder = "updateOrder",
+    DeleteOrder = "deleteOrder"
+
 }
 
 export const publishMessage = async (channel: Channels, data: any) => {

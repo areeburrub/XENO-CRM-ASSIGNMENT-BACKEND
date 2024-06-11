@@ -27,7 +27,7 @@ model Notification {
   id        String   @id @default(cuid())
   userId    String
   content   String
-  createrAt DateTime @default(now())
+  createdAt DateTime @default(now())
   User      User     @relation(fields: [userId], references: [id])
 }
 
@@ -44,22 +44,13 @@ model Customer {
 }
 
 model Order {
-  id         String    @id @default(cuid())
+  id         String   @id @default(cuid())
+  itemName   String
+  quantity   Int
   total      Float
-  createdBy  String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
   customerId String
-  customer   Customer  @relation(fields: [customerId], references: [id])
-  products   Product[]
-}
-
-model Product {
-  id        String   @id @default(cuid())
-  name      String
-  price     Float
-  createdBy String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  orders    Order[]
+  createdBy  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  customer   Customer @relation(fields: [customerId], references: [id])
 }

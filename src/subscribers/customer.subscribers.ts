@@ -2,37 +2,28 @@
 import prisma from "../prisma";
 import {Channels, subscribeMessage} from "../utils/redisMessageBroker";
 import {sendNotification} from "../utils/sendNotification";
+import {Customer} from "@prisma/client"
 
-interface CustomerData {
-    id: string,
-    name: string,
-    email: string,
-    createdBy: string,
-    lastVisit: Date,
-    createdAt: Date,
-    updatedAt: Date
-}
-
-const handleMessage = async (data: CustomerData, channel: string ) => {
+const handleMessage = async (data: Customer, channel: string ) => {
     try {
         switch (channel) {
             case Channels.CreateCustomer:
-                await prisma.customer.create({data});
+                const createdCustomer = await prisma.customer.create({data});
                 console.log(`Customer created:`, data);
-                sendNotification(`Customer created: ${JSON.stringify(data)}`, data.createdBy);
+                sendNotification(`${createdCustomer.name} is added as customer`, createdCustomer.createdBy);
                 break;
             case Channels.UpdateCustomer:
-                await prisma.customer.update({
+                const updateCustomer = await prisma.customer.update({
                     where: {id: data.id, createdBy: data.createdBy},
                     data
                 });
                 console.log(`Customer updated:`, data);
-                sendNotification(`Customer updated: ${JSON.stringify(data)}`, data.createdBy );
+                sendNotification(`${updateCustomer.name} data is updated`, updateCustomer.createdBy );
                 break;
             case Channels.DeleteCustomer:
-                await prisma.customer.delete({where: {id: data.id}});
+                const deletedCustomer =await prisma.customer.delete({where: {id: data.id}});
                 console.log(`Customer deleted:`, data);
-                sendNotification(`Customer deleted: ${JSON.stringify(data)}`, data.createdBy);
+                sendNotification(`${deletedCustomer.name} is deleted from customer`, deletedCustomer.createdBy);
                 break;
             default:
                 console.log(`Unknown channel: ${channel}`);

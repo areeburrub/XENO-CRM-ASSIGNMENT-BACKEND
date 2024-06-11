@@ -1,4 +1,5 @@
 import {Request, Response} from "express";
+import {Customer} from "@prisma/client";
 import prisma from "../prisma";
 import {Channels, publishMessage} from "../utils/redisMessageBroker";
 
@@ -13,11 +14,30 @@ export const getCustomers = async (req: Request, res: Response) => {
     res.json(customers);
 };
 
+export const getCustomerCount = async (req: Request, res: Response) => {
+    const createdBy = req?.user?.id;
+
+    try {
+        const customerCount = await prisma.customer.count({
+            where: {
+                createdBy: createdBy,
+            },
+        });
+
+        res.json({ count: customerCount });
+    } catch (error) {
+        console.error('Error fetching customer count:', error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
 export const getCustomer = async (req: Request, res: Response) => {
+    const createdBy = req?.user?.id;
     const {id} = req.params;
     const customer = await prisma.customer.findUnique({
         where: {
             id: id,
+            createdBy: createdBy
         },
     });
 
@@ -29,11 +49,11 @@ export const getCustomer = async (req: Request, res: Response) => {
 };
 
 export const createCustomer = async (req: Request, res: Response) => {
-    const {name, email} = req.body;
-    console.log(req?.user?.id);
+    const {name, email, lastVisit }:Customer = req.body;
     await publishMessage(Channels.CreateCustomer, {
         name,
         email,
+        lastVisit,
         createdBy: req?.user?.id,
     });
     res.status(202).json({message: "Creation request received"});
@@ -41,16 +61,18 @@ export const createCustomer = async (req: Request, res: Response) => {
 
 export const updateCustomer = async (req: Request, res: Response) => {
     const {id} = req.params;
-    const {name, email} = req.body;
+    const {name, email, lastVisit} = req.body;
     const createdBy = req?.user?.id;
 
-    await publishMessage(Channels.UpdateCustomer, {id, name, email, createdBy});
+    await publishMessage(Channels.UpdateCustomer, {id, name, email, lastVisit, createdBy});
     res.status(202).json({message: "Update request received"});
 };
 
-export const deleteCustomer = async (req: Request, res: Response) => {
-    const {id} = req.params;
+export const deleteCustomer = (req: Request, res: Response) => {
+    const {ids}:{ids:string[]} = req.body;
     const createdBy = req?.user?.id;
-    await publishMessage(Channels.DeleteCustomer, {id, createdBy});
+    ids.map(async (id)=>{
+        await publishMessage(Channels.DeleteCustomer, {id, createdBy});
+    })
     res.status(202).json({message: "Delete request received"});
 };
