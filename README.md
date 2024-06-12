@@ -8,7 +8,7 @@ This is a backend application for a CRM system. It is built using Node Js Rest F
 - Node Js
 - Express Js
 - Prisma ORM
-- Supabase Database
+- Supabase Database (Postgres)
 - Google OAuth
 - Redis for Message Broker (Pub/Sub)
 
