@@ -71,3 +71,5 @@ This is a backend application for a CRM system. It is built using Node Js Rest F
   - _/campaigns/_ - Delete Campaign By Id (DELETE) ```{Body: {ids: [id1, id2,...]}}```
   - _/campaigns/start/:id_ - Start Campaign (PUT)
   - _/campaigns/logs/:id_ - Get Communication Logs By Campaign Id (GET)
+
+![Postman Screenshots](./assets/Postman_BoyKg5n54s.png)
