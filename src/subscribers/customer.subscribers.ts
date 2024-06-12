@@ -21,9 +21,27 @@ const handleMessage = async (data: Customer, channel: string ) => {
                 sendNotification(`${updateCustomer.name} data is updated`, updateCustomer.createdBy );
                 break;
             case Channels.DeleteCustomer:
-                const deletedCustomer =await prisma.customer.delete({where: {id: data.id}});
+                const deletedCustomer =await prisma.customer.delete({
+                    where: {
+                        id: data.id,
+                        createdBy: data.createdBy,
+                    }
+                });
                 console.log(`Customer deleted:`, data);
                 sendNotification(`${deletedCustomer.name} is deleted from customer`, deletedCustomer.createdBy);
+                break;
+            case Channels.MarkCustomerVisit:
+                const visitingCustomer =await prisma.customer.update({
+                    where: { id: data.id, createdBy: data.createdBy },
+                    data: {
+                        totalVisits: {
+                            increment: 1, // This will increment the totalVisits by 1
+                        },
+                        lastVisit: new Date(), // Optionally update the lastVisit field to the current date
+                    },
+                });
+                console.log(`Customer Visit Updated`, data);
+                sendNotification(`noted ${visitingCustomer.name} visit`, visitingCustomer.createdBy);
                 break;
             default:
                 console.log(`Unknown channel: ${channel}`);
@@ -34,7 +52,7 @@ const handleMessage = async (data: Customer, channel: string ) => {
     }
 };
 
-const channels = [Channels.CreateCustomer, Channels.UpdateCustomer, Channels.DeleteCustomer];
+const channels = [Channels.CreateCustomer, Channels.UpdateCustomer, Channels.DeleteCustomer, Channels.MarkCustomerVisit];
 
 channels.forEach((channel) => {
     subscribeMessage(channel, handleMessage)

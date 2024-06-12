@@ -32,15 +32,19 @@ model Notification {
 }
 
 model Customer {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  createdBy String
-  lastVisit DateTime @default(now())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  orders    Order[]
-  User      User     @relation(fields: [createdBy], references: [id])
+  id               String             @id @default(cuid())
+  name             String
+  email            String             @unique
+  createdBy        String
+  totalVisits      Int                @default(1)
+  lastVisit        DateTime           @default(now())
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  orders           Order[]
+  User             User               @relation(fields: [createdBy], references: [id])
+  Audience         Audience?          @relation(fields: [audienceId], references: [id])
+  audienceId       String?
+  CommunicationLog CommunicationLog[]
 }
 
 model Order {
@@ -53,4 +57,36 @@ model Order {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   customer   Customer @relation(fields: [customerId], references: [id])
+}
+
+model Audience {
+  id        String     @id @default(cuid())
+  createdBy String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  customers Customer[]
+  Campaign  Campaign[]
+}
+
+model Campaign {
+  id         String   @id @default(cuid())
+  name       String
+  message    String
+  status     String   @default("not started")
+  audienceId String
+  createdBy  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  Audience   Audience @relation(fields: [audienceId], references: [id])
+}
+
+model CommunicationLog {
+  id          String   @id @default(cuid())
+  customerId  String
+  campaignId  String
+  vendorMsgId String
+  status      String
+  createdBy   String
+  createdAt   DateTime @default(now())
+  Customer    Customer @relation(fields: [customerId], references: [id])
 }

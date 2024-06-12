@@ -4,7 +4,7 @@ import {
   getCustomer,
   createCustomer,
   updateCustomer,
-  deleteCustomer, getCustomerCount,
+  deleteCustomer, getCustomerCount, markCustomerVisit,
 } from "../controllers/customers.controller";
 
 import handleValidationError from "../middlewares/handleValidationError";
@@ -27,5 +27,7 @@ router.get("/:id", getCustomer);
 router.put("/:id", updateCustomerValidation, handleValidationError, updateCustomer);
 
 router.delete("/", deleteCustomer);
+
+router.put("/add-visit/:id", markCustomerVisit);
 
 export default router;

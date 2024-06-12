@@ -10,6 +10,9 @@ export const getOrders = async (req: Request, res: Response) => {
 
     const orders = await prisma.order.findMany({
         where: {createdBy: createdBy},
+        include: {
+            customer: true, // Include the related customer data
+        },
     });
 
     res.json(orders);
@@ -39,6 +42,9 @@ export const getOrder = async (req: Request, res: Response) => {
         where: {
             id: id,
             createdBy: createdBy
+        },
+        include: {
+            customer: true, // Include the related customer data
         },
     });
 
