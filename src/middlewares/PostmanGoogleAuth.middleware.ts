@@ -1,6 +1,5 @@
-import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
-import {OAuth2Client} from "google-auth-library";
+import { OAuth2Client } from "google-auth-library";
 import prisma from "../prisma";
 
 dotenv.config();

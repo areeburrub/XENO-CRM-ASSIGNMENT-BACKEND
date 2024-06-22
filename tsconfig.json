@@ -3,7 +3,7 @@
     "target": "ES6",
     "module": "commonjs",
     "typeRoots": [
-      "./src/types"
+      "src/types"
     ],
     "outDir": "./dist",
     "esModuleInterop": true,

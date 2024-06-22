@@ -1,7 +1,5 @@
 import express, {NextFunction, Request, Response} from "express";
 import passport from "passport";
-import jwt from "jsonwebtoken";
-
 import * as dotenv from "dotenv";
 import {User} from "@prisma/client";
 
