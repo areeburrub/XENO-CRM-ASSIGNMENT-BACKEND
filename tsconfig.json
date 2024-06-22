@@ -3,7 +3,7 @@
     "target": "ES6",
     "module": "commonjs",
     "typeRoots": [
-      "src/types"
+      "api/types"
     ],
     "outDir": "./dist",
     "esModuleInterop": true,
@@ -12,7 +12,7 @@
     "baseUrl": "."
   },
   "include": [
-    "./src/**/*"
+    "./api/**/*"
   ],
   "exclude": [
     "node_modules","dist",

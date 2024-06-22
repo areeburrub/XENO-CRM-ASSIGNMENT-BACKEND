@@ -1,5 +1,5 @@
 {
-  "watch": ["src", "./package.json"],
+  "watch": ["api", "./package.json"],
   "ext": "ts",
-  "exec": "concurrently \"npx tsc --watch\" \"ts-node src/index.ts\" "
+  "exec": "concurrently \"npx tsc --watch\" \"ts-node api/index.ts\" "
 }

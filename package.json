@@ -42,6 +42,6 @@
     "typescript": "^5.4.5"
   },
   "prisma": {
-    "schema": "./src/prisma/schema.prisma"
+    "schema": "./api/prisma/schema.prisma"
   }
 }
